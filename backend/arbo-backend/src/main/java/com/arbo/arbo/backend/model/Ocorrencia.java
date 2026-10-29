@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-
 @Entity
 public class Ocorrencia {
 
@@ -40,7 +39,7 @@ public class Ocorrencia {
     @Column(nullable = false, length = 30)
     private String status = "PENDENTE";
 
-    @Column(name = "data_registro", nullable = false, insertable = false, updatable = false)
+    @Column(name = "data_registro", nullable = false, updatable = false)
     private LocalDateTime dataRegistro;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -113,6 +112,10 @@ public class Ocorrencia {
 
     public LocalDateTime getDataRegistro() {
         return dataRegistro;
+    }
+
+    public void setDataRegistro(LocalDateTime dataRegistro) {
+        this.dataRegistro = dataRegistro;
     }
 
     public Usuario getUsuario() {

@@ -1,5 +1,6 @@
 package com.arbo.arbo.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,10 @@ public class OcorrenciaService {
     }
 
     public Ocorrencia cadastrar(Ocorrencia ocorrencia) {
+        if (ocorrencia.getDataRegistro() == null) {
+            ocorrencia.setDataRegistro(LocalDateTime.now());
+        }
+        
         return ocorrenciaRepository.save(ocorrencia);
     }
 
