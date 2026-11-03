@@ -1,44 +1,3 @@
-:root {
-  --cor-principal: #2B7030;
-  --cor-principal-hover: #205725;
-  --cor-verde-escuro: #19451F;
-  --cor-fundo: #F7EDE1;
-  --cor-superficie: #FFFFFF;
-  --cor-texto: #202820;
-  --cor-texto-secundario: #727B70;
-  --cor-borda: #E2D8CC;
-
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--cor-texto);
-  background: var(--cor-fundo);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-button,
-input {
-  font: inherit;
-}
-
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/*  principal  */
-
 .pagina-login {
   min-height: 100vh;
   display: grid;
@@ -213,7 +172,7 @@ a {
 
 .cabecalho-login h2 {
   margin: 16px 0 12px;
-  color: var(--cor-escura);
+  color: var(--cor-verde-escuro);
   font-size: 30px;
   font-weight: 600;
   letter-spacing: -1.1px;
@@ -223,7 +182,7 @@ a {
 .cabecalho-login p {
   max-width: 350px;
   margin: 0;
-  color: var(--cor-secundaria);
+  color: var(--cor-texto-secundario);
   font-size: 14px;
   line-height: 1.8;
 }
@@ -293,7 +252,7 @@ a {
 .formulario-login input:focus {
   background: white;
   border-color: var(--cor-principal);
-box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.15);
+  box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.15);
 }
 
 /* botão de entrada */
@@ -348,7 +307,7 @@ box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.15);
 
 .texto-cadastro {
   margin: 28px 0 0;
-  color: var(--cor-secundaria);
+  color: var(--cor-texto-secundario);
   text-align: center;
   font-size: 13px;
   line-height: 1.8;
@@ -436,7 +395,7 @@ box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.15);
     justify-content: center;
     gap: 8px;
     margin-bottom: 48px;
-    color: var(--cor-escura);
+    color: var(--cor-verde-escuro);
     font-size: 30px;
     font-weight: 650;
     letter-spacing: -1.5px;

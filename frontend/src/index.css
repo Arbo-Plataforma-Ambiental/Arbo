@@ -1,0 +1,40 @@
+:root {
+  --cor-principal: #2B7030;
+  --cor-principal-hover: #205725;
+  --cor-verde-escuro: #19451F;
+
+  --cor-fundo: #F7EDE1;
+  --cor-superficie: #FFFFFF;
+
+  --cor-texto: #202820;
+  --cor-texto-secundario: #727B70;
+  --cor-borda: #E2D8CC;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}

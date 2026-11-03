@@ -1,7 +1,11 @@
 
 import { useState } from "react"
 
-function FormularioLogin() {
+type FormularioLoginProps = {
+  onEntrar: () => void
+}
+
+function FormularioLogin({ onEntrar }: FormularioLoginProps) {
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
   const [modoCadastro, setModoCadastro] = useState(false)
@@ -48,6 +52,8 @@ function FormularioLogin() {
       }
       return
     }
+
+    onEntrar()
 
   }
 

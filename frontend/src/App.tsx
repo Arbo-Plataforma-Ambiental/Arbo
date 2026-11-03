@@ -1,9 +1,11 @@
 
 import './App.css'
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import FormularioLogin from './components/FormularioLogin'
 import LogoArbo from './components/LogoArbo'
+import Perfil from './components/Perfil'
 
-function App() {
+function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   return (
     <main className="pagina-login">
       <aside className="painel-marca">
@@ -52,7 +54,7 @@ function App() {
             </p>
           </div>
 
-          <FormularioLogin />
+          <FormularioLogin onEntrar={onEntrar} />
 
           <div className="nota-login">
             <span />
@@ -66,6 +68,45 @@ function App() {
         </p>
       </section>
     </main>
+  )
+}
+
+function TelaMapa() {
+  return (
+    <div>
+      <h1>Mapa do Arbo</h1>
+      <p>em desenvolvimento.</p>
+    </div>
+  )
+}
+
+function TelaOngs() {
+  return (
+    <div>
+      <h1>ONGs</h1>
+      <p>Em desenvolvimento</p>
+    </div>
+  )
+}
+
+function App() {
+  const navegar = useNavigate()
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <TelaLogin onEntrar={() => navegar('/perfil')} />
+        }
+      />
+
+      <Route path="/perfil" element={<Perfil />} />
+      <Route path="/mapa" element={<TelaMapa />} />
+      <Route path="/ongs" element={<TelaOngs />} />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
