@@ -22,7 +22,7 @@ O **Arbo** é uma plataforma que conecta cidadãos, ONGs e órgãos públicos pa
 
 - **Back-end:** Java 21, Spring Boot, Spring Data JPA, Maven
 - **Banco de dados:** MySQL
-- **Front-end:** a definir (React, Angular ou Vue)
+- **Front-end:** React
 - **Versionamento:** Git e GitHub
 
 ## Estrutura do back-end
