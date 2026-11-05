@@ -1,4 +1,4 @@
-
+import Ongs from './components/Ongs'
 import './App.css'
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import FormularioLogin from './components/FormularioLogin'
@@ -80,15 +80,6 @@ function TelaMapa() {
   )
 }
 
-function TelaOngs() {
-  return (
-    <div>
-      <h1>ONGs</h1>
-      <p>Em desenvolvimento</p>
-    </div>
-  )
-}
-
 function App() {
   const navegar = useNavigate()
 
@@ -103,7 +94,7 @@ function App() {
 
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/mapa" element={<TelaMapa />} />
-      <Route path="/ongs" element={<TelaOngs />} />
+      <Route path="/ongs" element={<Ongs />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
