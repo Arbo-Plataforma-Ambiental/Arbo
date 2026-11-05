@@ -3,12 +3,12 @@
   --cor-principal-hover: #205725;
   --cor-verde-escuro: #19451F;
 
-  --cor-fundo: #F7EDE1;
+  --cor-fundo: #F2F5F2;
   --cor-superficie: #FFFFFF;
 
   --cor-texto: #202820;
   --cor-texto-secundario: #727B70;
-  --cor-borda: #E2D8CC;
+  --cor-borda: #DDE7DE;
 
   font-family: 'Segoe UI', Arial, sans-serif;
   color: var(--cor-texto);

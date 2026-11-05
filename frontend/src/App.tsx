@@ -5,6 +5,7 @@ import FormularioLogin from './components/FormularioLogin'
 import LogoArbo from './components/LogoArbo'
 import Perfil from './components/Perfil'
 import Mapa from './components/Mapa'
+import Ongs from './components/Ongs'
 
 function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   return (
@@ -72,15 +73,6 @@ function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   )
 }
 
-function TelaOngs() {
-  return (
-    <div>
-      <h1>ONGs</h1>
-      <p>Em desenvolvimento</p>
-    </div>
-  )
-}
-
 function App() {
   const navegar = useNavigate()
 
@@ -95,7 +87,7 @@ function App() {
 
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/mapa" element={<Mapa />} />
-      <Route path="/ongs" element={<TelaOngs />} />
+      <Route path="/ongs" element={<Ongs />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
