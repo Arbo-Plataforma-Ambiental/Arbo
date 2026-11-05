@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import FormularioLogin from './components/FormularioLogin'
 import LogoArbo from './components/LogoArbo'
 import Perfil from './components/Perfil'
+import Mapa from './components/Mapa'
 
 function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   return (
@@ -71,15 +72,6 @@ function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   )
 }
 
-function TelaMapa() {
-  return (
-    <div>
-      <h1>Mapa do Arbo</h1>
-      <p>em desenvolvimento.</p>
-    </div>
-  )
-}
-
 function TelaOngs() {
   return (
     <div>
@@ -102,7 +94,7 @@ function App() {
       />
 
       <Route path="/perfil" element={<Perfil />} />
-      <Route path="/mapa" element={<TelaMapa />} />
+      <Route path="/mapa" element={<Mapa />} />
       <Route path="/ongs" element={<TelaOngs />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />

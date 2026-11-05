@@ -46,8 +46,8 @@ function Perfil() {
                     </button>
 
                     <button className="opcao-perfil">
-                        <span>☯</span>
-                        <span>Botão</span>
+                        <span>🌳</span>
+                        <span>Minhas ocorrências</span>
                         <span>›</span>
                     </button>
 
