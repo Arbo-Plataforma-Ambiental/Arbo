@@ -1,4 +1,7 @@
 .pagina-perfil {
+    --cor-verde-claro: #dcebdc;
+    --cor-perigo: #b83a3a;
+
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -6,7 +9,30 @@
     color: var(--cor-texto);
 }
 
+.estatisticas-perfil,
+.lista-conquistas,
+.lista-modal {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
 
+.pagina-perfil svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.limite-perfil {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Cabeçalho */
 
 .cabecalho-perfil {
     min-height: 70px;
@@ -19,93 +45,265 @@
 }
 
 .marca-perfil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     color: var(--cor-verde-escuro);
     font-size: 25px;
     font-weight: 700;
     letter-spacing: -1px;
 }
 
-.cabecalho-perfil input {
+.logo-perfil {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: var(--cor-principal);
+    border-radius: 10px;
+}
+
+.logo-perfil .icone-marca {
+    width: 26px;
+    height: 26px;
+}
+
+.logo-perfil svg {
+    stroke: none;
+}
+
+.busca-perfil {
     flex: 1;
+    min-width: 0;
+}
+
+.busca-perfil input {
+    width: 100%;
     height: 42px;
-    padding: 0 18px;
-    background: var(--cor-fundo);
+    padding: 0 18px 0 42px;
+    background: var(--cor-fundo)
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23727B70' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E")
+        no-repeat 16px center / 17px;
     border: 1px solid var(--cor-borda);
     border-radius: 25px;
     outline: none;
 }
 
-.cabecalho-perfil input:focus {
+.busca-perfil input:focus {
     border-color: var(--cor-principal);
     box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.1);
 }
 
-/* Conteúdo */
-
-.conteudo-perfil {
-    flex: 1;
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 35px 24px 110px;
+.avatar-cabecalho {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--cor-principal);
+    background: var(--cor-verde-claro);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.conteudo-perfil h1 {
-    margin: 0 0 24px;
-    font-size: 25px;
+.avatar-cabecalho:hover {
+    background: #cbe0cb;
+}
+
+.avatar-cabecalho svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Faixa com a identificação */
+
+.faixa-perfil {
+    padding: 28px 0 88px;
+    color: white;
+    background: linear-gradient(120deg, #19451f, var(--cor-principal));
+}
+
+.faixa-perfil h1 {
+    margin: 0 0 20px;
+    font-size: 20px;
     font-weight: 650;
 }
 
-
-
-.cartao-identificacao {
+.identificacao-perfil {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 28px;
-    color: white;
-    background: linear-gradient(120deg, #19451f, var(--cor-principal));
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(25, 69, 31, 0.12);
 }
 
 .avatar-perfil {
-    width: 68px;
-    height: 68px;
+    width: 84px;
+    height: 84px;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.35);
-    border-radius: 50%;
-    font-size: 30px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+}
+
+.avatar-perfil svg {
+    width: 42px;
+    height: 42px;
+    stroke-width: 1.5;
+}
+
+.informacoes-usuario {
+    min-width: 0;
 }
 
 .informacoes-usuario h2 {
-    margin: 0 0 4px;
-    font-size: 20px;
+    margin: 0 0 3px;
+    font-size: 21px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
 }
 
 .informacoes-usuario p {
-    margin: 0 0 9px;
+    margin: 0;
     color: #d8e8d9;
     font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
 }
 
-.tipo-conta {
-    display: inline-block;
-    padding: 5px 11px;
+.selos-perfil {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 9px;
+}
+
+.selos-perfil span {
+    padding: 4px 11px;
     background: rgba(255, 255, 255, 0.18);
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
 }
 
+/* Conteúdo */
 
+.conteudo-perfil {
+    flex: 1;
+    padding-bottom: 110px;
+}
+
+.icone-perfil {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--cor-principal);
+    background: var(--cor-verde-claro);
+    border-radius: 11px;
+}
+
+.icone-perfil svg {
+    width: 21px;
+    height: 21px;
+}
+
+.estatisticas-perfil {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: -60px;
+    padding: 20px 0;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(25, 69, 31, 0.12);
+}
+
+.estatisticas-perfil li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 8px;
+    color: var(--cor-texto-secundario);
+    text-align: center;
+    font-size: 13px;
+}
+
+.estatisticas-perfil li + li {
+    border-left: 1px solid var(--cor-borda);
+}
+
+.estatisticas-perfil strong {
+    margin-top: 10px;
+    color: var(--cor-verde-escuro);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+/* Conquistas */
+
+.secao-conquistas {
+    margin-top: 32px;
+}
+
+.secao-conquistas h2 {
+    margin: 0 0 16px;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.lista-conquistas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.cartao-conquista {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 14px;
+    text-align: center;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(30, 60, 35, 0.05);
+}
+
+.emoji-conquista {
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+.cartao-conquista strong {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.cartao-conquista p {
+    margin: 4px 0 0;
+    color: var(--cor-texto-secundario);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Opções */
 
 .opcoes-perfil {
-    margin-top: 22px;
+    margin-top: 32px;
     overflow: hidden;
     background: var(--cor-superficie);
     border: 1px solid var(--cor-borda);
@@ -115,19 +313,20 @@
 
 .opcao-perfil {
     width: 100%;
-    min-height: 64px;
+    min-height: 68px;
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 0 22px;
+    padding: 12px 20px;
     color: var(--cor-texto);
     background: var(--cor-superficie);
+    border: none;
     border-bottom: 1px solid var(--cor-borda);
-
     text-align: left;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s ease; 
+    transition: background-color 0.2s ease;
 }
 
 .opcao-perfil:last-child {
@@ -138,49 +337,368 @@
     background: #f5f8f4;
 }
 
-.opcao-perfil span:first-child {
-    font-size: 19px;
+.rotulo-opcao {
+    flex: 1;
+    min-width: 0;
 }
 
-.opcao-perfil span:last-child {
-    margin-left: auto;
+.contador-opcao {
+    min-width: 28px;
+    padding: 3px 9px;
+    color: var(--cor-verde-escuro);
+    background: var(--cor-verde-claro);
+    border-radius: 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.seta-opcao {
+    display: flex;
+    flex-shrink: 0;
     color: #829184;
-    font-size: 22px;
 }
 
+.seta-opcao svg {
+    width: 18px;
+    height: 18px;
+}
+
+.opcao-perfil.perigo {
+    color: var(--cor-perigo);
+}
+
+.opcao-perfil.perigo .icone-perfil {
+    color: var(--cor-perigo);
+    background: #f9e4e4;
+}
+
+.opcao-perfil.perigo .seta-opcao {
+    color: var(--cor-perigo);
+}
+
+/* Modais */
+
+.modal-perfil {
+    width: min(460px, calc(100vw - 32px));
+    max-height: calc(100dvh - 48px);
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: var(--cor-texto);
+    background: var(--cor-superficie);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(15, 35, 20, 0.25);
+}
+
+.modal-perfil::backdrop {
+    background: rgba(15, 35, 20, 0.5);
+}
+
+.interior-modal {
+    padding: 24px;
+}
+
+.topo-modal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.topo-modal h2 {
+    margin: 0 0 4px;
+    font-size: 19px;
+    font-weight: 650;
+}
+
+.topo-modal p {
+    margin: 0;
+    color: var(--cor-texto-secundario);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.fechar-modal-perfil {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--cor-texto-secundario);
+    background: var(--cor-fundo);
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.fechar-modal-perfil:hover {
+    color: var(--cor-texto);
+}
+
+.fechar-modal-perfil svg {
+    width: 18px;
+    height: 18px;
+}
+
+.formulario-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.campo-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-perfil label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.campo-perfil input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 14px;
+    color: var(--cor-texto);
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 9px;
+    outline: none;
+}
+
+.campo-perfil input:focus {
+    border-color: var(--cor-principal);
+    box-shadow: 0 0 0 3px rgba(43, 112, 48, 0.15);
+}
+
+.lista-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-modal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+}
+
+.item-modal img {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 9px;
+}
+
+.item-modal div {
+    min-width: 0;
+}
+
+.item-modal strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.item-modal small {
+    display: block;
+    margin-top: 3px;
+    color: var(--cor-texto-secundario);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.status-denuncia {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-denuncia.pendente {
+    color: #80600f;
+    background: #fbf1d6;
+}
+
+.status-denuncia.aprovada {
+    color: #1f5c94;
+    background: #dfecf8;
+}
+
+.status-denuncia.recusada {
+    color: var(--cor-perigo);
+    background: #f9e4e4;
+}
+
+.status-denuncia.resolvida {
+    color: var(--cor-verde-escuro);
+    background: var(--cor-verde-claro);
+}
+
+.acoes-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.formulario-perfil .acoes-modal {
+    margin-top: 6px;
+}
+
+.botao-perfil {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    color: white;
+    background: var(--cor-principal);
+    border: 1px solid var(--cor-principal);
+    border-radius: 9px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.botao-perfil:hover {
+    background: var(--cor-principal-hover);
+}
+
+.botao-perfil.secundario {
+    color: var(--cor-texto);
+    background: var(--cor-superficie);
+    border-color: var(--cor-borda);
+}
+
+.botao-perfil.secundario:hover {
+    background: var(--cor-fundo);
+}
+
+.botao-perfil.perigo {
+    background: var(--cor-perigo);
+    border-color: var(--cor-perigo);
+}
+
+.botao-perfil.perigo:hover {
+    background: #9c2f2f;
+}
+
+.pagina-perfil button:focus-visible,
+.pagina-perfil a:focus-visible {
+    outline: 3px solid #9dbca2;
+    outline-offset: 2px;
+}
+
+.pagina-perfil .opcao-perfil:focus-visible {
+    outline-offset: -3px;
+}
 
 /* Responsividade */
 
 @media (max-width: 650px) {
     .cabecalho-perfil {
         min-height: 62px;
-        gap: 16px;
+        gap: 12px;
         padding: 10px 16px;
     }
 
     .marca-perfil {
+        gap: 8px;
         font-size: 22px;
     }
 
-    .cabecalho-perfil input {
-        min-width: 0;
+    .busca-perfil input {
+        height: 38px;
+        padding: 0 14px 0 38px;
+        background-position: 13px center;
+    }
+
+    .avatar-cabecalho {
+        width: 38px;
         height: 38px;
     }
 
-    .conteudo-perfil {
-        padding: 25px 16px 100px;
+    .limite-perfil {
+        padding-right: 16px;
+        padding-left: 16px;
     }
 
-    .cartao-identificacao {
+    .faixa-perfil {
+        padding: 22px 0 84px;
+    }
+
+    .identificacao-perfil {
         gap: 14px;
-        padding: 22px 18px;
     }
 
     .avatar-perfil {
-        width: 58px;
-        height: 58px;
-        font-size: 25px;
+        width: 68px;
+        height: 68px;
+        border-radius: 16px;
     }
 
-    
+    .avatar-perfil svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    .estatisticas-perfil {
+        padding: 16px 0;
+    }
+
+    .estatisticas-perfil li {
+        padding: 0 4px;
+        font-size: 12px;
+    }
+
+    .estatisticas-perfil strong {
+        font-size: 19px;
+    }
+
+    .secao-conquistas,
+    .opcoes-perfil {
+        margin-top: 24px;
+    }
+
+    .lista-conquistas {
+        gap: 8px;
+    }
+
+    .cartao-conquista {
+        padding: 14px 8px;
+    }
+
+    .cartao-conquista strong {
+        font-size: 13px;
+    }
+
+    .cartao-conquista p {
+        font-size: 11px;
+    }
+
+    .opcao-perfil {
+        padding: 12px 14px;
+    }
+
+    .interior-modal {
+        padding: 20px;
+    }
 }
