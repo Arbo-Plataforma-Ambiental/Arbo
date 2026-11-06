@@ -84,7 +84,7 @@
 .botao-nova-denuncia {
     position: absolute;
     right: 20px;
-    bottom: 10px;
+    bottom: 90px; /* 70px da barra inferior + 20px, alinhado com a legenda */
     z-index: 1000;
 
     padding: 14px 22px;
