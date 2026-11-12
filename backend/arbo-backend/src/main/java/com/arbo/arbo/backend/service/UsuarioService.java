@@ -5,11 +5,14 @@ import org.springframework.stereotype.Service;
 import com.arbo.arbo.backend.repository.UsuarioRepository;
 import com.arbo.arbo.backend.model.Usuario;
 import java.util.Optional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -20,6 +23,10 @@ public class UsuarioService {
     }
 
     public Usuario cadastrar(Usuario usuario) {
+        
+        String senhaHash = passwordEncoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaHash);
+
         return usuarioRepository.save(usuario);
     }
 
@@ -42,7 +49,8 @@ public class UsuarioService {
 
         usuario.setNome(usuarioAtualizado.getNome());
         usuario.setEmail(usuarioAtualizado.getEmail());
-        usuario.setSenha(usuarioAtualizado.getSenha());
+        String senhaHash= passwordEncoder.encode(usuarioAtualizado.getSenha());
+        usuario.setSenha(senhaHash);
         usuario.setTipo(usuarioAtualizado.getTipo());
 
         return usuarioRepository.save(usuario);
