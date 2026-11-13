@@ -3,8 +3,6 @@ package com.arbo.arbo.backend.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.arbo.arbo.backend.model.Usuario;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.arbo.arbo.backend.dto.UsuarioRequestDTO;
+import com.arbo.arbo.backend.dto.UsuarioResponseDTO;
+import com.arbo.arbo.backend.model.Usuario;
 import com.arbo.arbo.backend.service.UsuarioService;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -29,39 +30,48 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+
     @GetMapping
-    public List<Usuario> listar() {
-        return usuarioService.listarTodos();
-    } // get usuarios
+    public List<UsuarioResponseDTO> listar() {
+        return usuarioService.listarTodos()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
+    } // get usuarios, com camada de segurança DTO
 
     @PostMapping
-    public Usuario cadastrar(@RequestBody Usuario usuario) {
-        return usuarioService.cadastrar(usuario);
-    } // create usuarios
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(
+            @RequestBody UsuarioRequestDTO dto) {
+
+        Usuario usuario = converterParaEntidade(dto);
+        Usuario salvo = usuarioService.cadastrar(usuario);
+
+        return ResponseEntity.ok(converterParaDTO(salvo));
+    } // create usuarios, com camada de segurança DTO
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        Optional<Usuario> usuario = usuarioService.buscarPorId(id);
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(
+            @PathVariable Long id) {
 
-        if (usuario.isPresent()) {
-            return ResponseEntity.ok(usuario.get());
-        }
-
-        return ResponseEntity.notFound().build();
+        return usuarioService.buscarPorId(id)
+                .map(this::converterParaDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(
+    public ResponseEntity<UsuarioResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody Usuario usuarioAtualizado) {
+            @RequestBody UsuarioRequestDTO dto) {
 
-        Usuario usuario = usuarioService.atualizar(id, usuarioAtualizado);
+        Usuario usuario = converterParaEntidade(dto);
+        Usuario atualizado = usuarioService.atualizar(id, usuario);
 
-        if (usuario == null) {
+        if (atualizado == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(usuario);
+        return ResponseEntity.ok(converterParaDTO(atualizado));
     }
 
     @DeleteMapping("/{id}")
@@ -76,6 +86,26 @@ public class UsuarioController {
 
         return ResponseEntity.noContent().build();
 
+    }
+
+    private UsuarioResponseDTO converterParaDTO(Usuario usuario) {
+    return new UsuarioResponseDTO(
+        usuario.getId(),
+        usuario.getNome(),
+        usuario.getEmail(),
+        usuario.getTipo()
+    );
+    }
+
+    private Usuario converterParaEntidade(UsuarioRequestDTO dto) {
+        Usuario usuario = new Usuario();
+
+        usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
+        usuario.setSenha(dto.senha());
+        usuario.setTipo(dto.tipo());
+
+        return usuario;
     }
 
 }
