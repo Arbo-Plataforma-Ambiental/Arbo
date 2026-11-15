@@ -1,11 +1,15 @@
 package com.arbo.arbo.backend.service;
 
 import java.util.List;
-import org.springframework.stereotype.Service;
-import com.arbo.arbo.backend.repository.UsuarioRepository;
-import com.arbo.arbo.backend.model.Usuario;
 import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.arbo.arbo.backend.model.Usuario;
+import com.arbo.arbo.backend.repository.UsuarioRepository;
+
+
 
 @Service
 public class UsuarioService {
@@ -55,5 +59,7 @@ public class UsuarioService {
 
         return usuarioRepository.save(usuario);
     }
+
+    
 
 }

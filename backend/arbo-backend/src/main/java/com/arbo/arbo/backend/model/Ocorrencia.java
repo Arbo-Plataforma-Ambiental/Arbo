@@ -27,10 +27,11 @@ public class Ocorrencia {
 
     @Column(nullable = false, length = 50)
     private String tipo;
-    @Column(nullable = false)
+    
+    @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal latitude;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal longitude;
 
     @Column(length = 500)

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
 import com.arbo.arbo.backend.model.Ocorrencia;
 import com.arbo.arbo.backend.repository.OcorrenciaRepository;
 
