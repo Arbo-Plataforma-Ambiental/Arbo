@@ -38,3 +38,16 @@ input {
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.mensagem-formulario {
+  margin: 0 0 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.mensagem-formulario.erro {
+  color: #9b2c2c;
+  background: #fbe9e9;
+  border: 1px solid #f1c4c4;
+}
