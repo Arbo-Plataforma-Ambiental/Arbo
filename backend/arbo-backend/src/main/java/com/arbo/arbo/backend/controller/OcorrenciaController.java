@@ -3,6 +3,7 @@ package com.arbo.arbo.backend.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.arbo.arbo.backend.dto.OcorrenciaRequestDTO;
 import com.arbo.arbo.backend.dto.OcorrenciaResponseDTO;
@@ -19,6 +21,8 @@ import com.arbo.arbo.backend.model.Ocorrencia;
 import com.arbo.arbo.backend.model.Usuario;
 import com.arbo.arbo.backend.service.OcorrenciaService;
 import com.arbo.arbo.backend.service.UsuarioService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/ocorrencias")
@@ -45,24 +49,19 @@ public class OcorrenciaController {
 
     @PostMapping
     public ResponseEntity<OcorrenciaResponseDTO> cadastrar(
-            @RequestBody OcorrenciaRequestDTO dto) {
+            @Valid @RequestBody OcorrenciaRequestDTO dto) {
 
-        Optional<Usuario> usuario = usuarioService.buscarPorId(dto.usuarioId());
+        Usuario usuario = usuarioService.buscarPorId(dto.usuarioId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Usuário informado não existe"));
 
-        if (usuario.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+        Ocorrencia salva = ocorrenciaService.cadastrar(converterParaEntidade(dto, usuario));
 
-        Ocorrencia ocorrencia = converterParaEntidade(dto, usuario.get());
-        Ocorrencia salva = ocorrenciaService.cadastrar(ocorrencia);
-
-        return ResponseEntity.ok(converterParaDTO(salva));
+        return ResponseEntity.status(HttpStatus.CREATED).body(converterParaDTO(salva));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OcorrenciaResponseDTO> buscarPorId(
-            @PathVariable Long id) {
-
+    public ResponseEntity<OcorrenciaResponseDTO> buscarPorId(@PathVariable Long id) {
         return ocorrenciaService.buscarPorId(id)
                 .map(this::converterParaDTO)
                 .map(ResponseEntity::ok)
@@ -72,25 +71,23 @@ public class OcorrenciaController {
     @PutMapping("/{id}")
     public ResponseEntity<OcorrenciaResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody OcorrenciaRequestDTO dto) {
+            @Valid @RequestBody OcorrenciaRequestDTO dto) {
 
-        Optional<Ocorrencia> existente = ocorrenciaService.buscarPorId(id);
+        Ocorrencia dados = new Ocorrencia();
 
-        if (existente.isEmpty()) {
+        dados.setTitulo(dto.titulo());
+        dados.setDescricao(dto.descricao());
+        dados.setTipo(dto.tipo());
+        dados.setLatitude(dto.latitude());
+        dados.setLongitude(dto.longitude());
+        dados.setImagem(dto.imagem());
+        dados.setStatus(dto.status());
+
+        Ocorrencia atualizada = ocorrenciaService.atualizar(id, dados);
+
+        if (atualizada == null) {
             return ResponseEntity.notFound().build();
         }
-
-        Ocorrencia dadosAtualizados = new Ocorrencia();
-
-        dadosAtualizados.setTitulo(dto.titulo());
-        dadosAtualizados.setDescricao(dto.descricao());
-        dadosAtualizados.setTipo(dto.tipo());
-        dadosAtualizados.setLatitude(dto.latitude());
-        dadosAtualizados.setLongitude(dto.longitude());
-        dadosAtualizados.setStatus(dto.status());
-
-        Ocorrencia atualizada =
-                ocorrenciaService.atualizar(id, dadosAtualizados);
 
         return ResponseEntity.ok(converterParaDTO(atualizada));
     }
@@ -108,36 +105,34 @@ public class OcorrenciaController {
         return ResponseEntity.noContent().build();
     }
 
-    private OcorrenciaResponseDTO converterParaDTO(Ocorrencia ocorrencia) {
-    return new OcorrenciaResponseDTO(
-        ocorrencia.getId(),
-        ocorrencia.getTitulo(),
-        ocorrencia.getDescricao(),
-        ocorrencia.getTipo(),
-        ocorrencia.getLatitude(),
-        ocorrencia.getLongitude(),
-        ocorrencia.getImagem(),
-        ocorrencia.getStatus(),
-        ocorrencia.getDataRegistro(),
-        ocorrencia.getUsuario().getId()
-    );
-}
-
-    private Ocorrencia converterParaEntidade(
-            OcorrenciaRequestDTO dto,
-            Usuario usuario) {
-
-        Ocorrencia ocorrencia = new Ocorrencia();
-
-        ocorrencia.setTitulo(dto.titulo());
-        ocorrencia.setDescricao(dto.descricao());
-        ocorrencia.setTipo(dto.tipo());
-        ocorrencia.setLatitude(dto.latitude());
-        ocorrencia.setLongitude(dto.longitude());
-        ocorrencia.setImagem(dto.imagem());
-        ocorrencia.setUsuario(usuario);
-
-        return ocorrencia;
+    private OcorrenciaResponseDTO converterParaDTO(Ocorrencia o) {
+        return new OcorrenciaResponseDTO(
+                o.getId(),
+                o.getTitulo(),
+                o.getDescricao(),
+                o.getTipo(),
+                o.getLatitude(),
+                o.getLongitude(),
+                o.getImagem(),
+                o.getStatus(),
+                o.getDataRegistro(),
+                o.getUsuario().getId());
     }
 
+    private Ocorrencia converterParaEntidade(OcorrenciaRequestDTO dto, Usuario usuario) {
+        Ocorrencia o = new Ocorrencia();
+
+        o.setTitulo(dto.titulo());
+        o.setDescricao(dto.descricao());
+        o.setTipo(dto.tipo());
+        o.setLatitude(dto.latitude());
+        o.setLongitude(dto.longitude());
+        o.setImagem(dto.imagem());
+        if (dto.status() != null) {
+            o.setStatus(dto.status());
+        }
+        o.setUsuario(usuario);
+
+        return o;
+    }
 }
