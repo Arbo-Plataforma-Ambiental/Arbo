@@ -1,12 +1,12 @@
 
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './Mapa.css'
 import RodapeNav from './RodapeNav'
 import MapaCalor from './MapaCalor'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ocorrencias } from '../data/ocorrencias'
+
 
 function obterCor(status: string) {
     switch (status) {
@@ -27,6 +27,30 @@ function obterCor(status: string) {
     }
 }
 
+function CliqueNoMapa({ ativo, onClique }: { ativo: boolean; onClique: (posicao: [number, number]) => void }) {
+    useMapEvents({
+        click(evento) {
+            if (ativo) {
+                onClique([evento.latlng.lat, evento.latlng.lng])
+            }
+        },
+    })
+    return null
+}
+
+type Ocorrencia = {
+    id: number
+    titulo: string
+    descricao: string
+    tipo: string
+    latitude: number
+    longitude: number
+    imagem: string | null
+    status: string
+    dataRegistro: string
+    usuarioId: number
+}
+
 function Mapa() {
     const [parametros] = useSearchParams()
 
@@ -35,6 +59,88 @@ function Mapa() {
     const [mostrarMarcadores, setMostrarMarcadores] = useState(true)
     const [pesquisa, setPesquisa] = useState(parametros.get('busca') ?? '')
 
+    const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>([])
+
+    // roda u a vez quando a tela abre e busca ocorrências
+    useEffect(() => {
+        fetch('http://localhost:8080/ocorrencias')
+            .then((resposta) => resposta.json())
+            .then((dados) => setOcorrencias(dados))
+            .catch((erro) => console.error('Erro ao carregar ocorrências: ', erro))
+    }, [])
+
+    const [escolhendoLocal, setEscolhendoLocal] = useState(false)
+    const [posicaoEscolhida, setPosicaoEscolhida] = useState<[number, number] | null>(null)
+    const [titulo, setTitulo] = useState('')
+    const [tipo, setTipo] = useState('')
+    const [descricao, setDescricao] = useState('')
+    const [imagem, setImagem] = useState('')
+    const [mensagemErro, setMensagemErro] = useState('')
+    const [aviso, setAviso] = useState('')
+
+    function localEscolhido(posicao: [number, number]) {
+        setPosicaoEscolhida(posicao)
+        setEscolhendoLocal(false)
+        setMostrarFormulario(true)
+    }
+
+    function fecharFormulario() {
+        setMostrarFormulario(false)
+        setPosicaoEscolhida(null)
+        setTitulo('')
+        setTipo('')
+        setDescricao('')
+        setImagem('')
+        setMensagemErro('')
+    }
+
+    async function enviarDenuncia(evento: FormEvent<HTMLFormElement>) {
+        evento.preventDefault()
+        setMensagemErro('')
+
+        if (!posicaoEscolhida) {
+            setMensagemErro('Escolha o local no mapa.')
+            return
+        }
+
+        const usuario = JSON.parse(localStorage.getItem('arbo-usuario') ?? '{}')
+
+        try {
+            const resposta = await fetch('http://localhost:8080/ocorrencias', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    titulo: titulo,
+                    tipo: tipo,
+                    descricao: descricao,
+                    imagem: imagem || null,
+                    latitude: Number(posicaoEscolhida[0].toFixed(7)),
+                    longitude: Number(posicaoEscolhida[1].toFixed(7)),
+                    usuarioId: usuario.id,
+                }),
+            })
+
+            if (!resposta.ok) {
+                const corpo = await resposta.json()
+
+                const erroDeCampo = corpo.campos ? Object.values(corpo.campos)[0] : null
+                setMensagemErro(String(erroDeCampo ?? corpo.erro ?? 'Não foi possível registrar.'))
+                return
+            }
+
+            const nova = await resposta.json()
+
+            setOcorrencias((atuais) => [...atuais, nova])
+
+            fecharFormulario()
+            setAviso('Denúncia registrada com sucesso!')
+            setTimeout(() => setAviso(''), 3000)
+        } catch (erro) {
+            console.error('Erro ao registrar denúncia: ', erro)
+            setMensagemErro('Não foi possível conectar ao servidor.')
+        }
+    }
+
     const ocorrenciasFiltradas = useMemo(
         () =>
             ocorrencias.filter((ocorrencia) =>
@@ -42,7 +148,7 @@ function Mapa() {
                     .toLowerCase()
                     .includes(pesquisa.toLowerCase())
             ),
-        [pesquisa]
+        [ocorrencias, pesquisa]
     )
 
     return (
@@ -93,6 +199,16 @@ function Mapa() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
+                <CliqueNoMapa ativo={escolhendoLocal} onClique={localEscolhido} />
+
+                {posicaoEscolhida && (
+                    <CircleMarker
+                        center={posicaoEscolhida}
+                        radius={11}
+                        pathOptions={{ color: '#202820', dashArray: '4', fillOpacity: 0.15 }}
+                    />
+                )}
+
                 {/* Camada de temperatura do Landsat */}
                 {modoCalor && <MapaCalor />}
 
@@ -101,7 +217,7 @@ function Mapa() {
                     ocorrenciasFiltradas.map((ocorrencia) => (
                         <CircleMarker
                             key={ocorrencia.id}
-                            center={ocorrencia.posicao}
+                            center={[ocorrencia.latitude, ocorrencia.longitude]}
                             radius={9}
                             pathOptions={{
                                 color: obterCor(ocorrencia.status),
@@ -111,11 +227,13 @@ function Mapa() {
                         >
                             <Popup>
                                 <div className="conteudo-popup">
-                                    <img
-                                        src={ocorrencia.imagem}
-                                        alt={ocorrencia.titulo}
-                                        className="imagem-ocorrencia"
-                                    />
+                                    {ocorrencia.imagem && (
+                                        <img
+                                            src={ocorrencia.imagem}
+                                            alt={ocorrencia.titulo}
+                                            className="imagem-ocorrencia"
+                                        />
+                                    )}
 
                                     <strong>{ocorrencia.titulo}</strong>
 
@@ -202,99 +320,93 @@ function Mapa() {
                     </div>
                 )}
             </MapContainer>
+            {aviso && (
+                <p className="mensagem-formulario sucesso aviso-mapa">{aviso}</p>
+            )}
 
-            {/* Botão original de denúncia */}
-            <button
-                type="button"
-                className="botao-nova-denuncia"
-                onClick={() => setMostrarFormulario(true)}
-            >
-                + Nova Denúncia
-            </button>
+            {escolhendoLocal ? (
+                <div className="aviso-escolher-local">
+                    Toque no mapa para marcar o local
+                    <button type="button" onClick={() => setEscolhendoLocal(false)}>
+                        Cancelar
+                    </button>
+                </div>
+            ) : (
+                <button
+                    type="button"
+                    className="botao-nova-denuncia"
+                    onClick={() => setEscolhendoLocal(true)}
+                >
+                    + Nova Denúncia
+                </button>
+            )}
 
-            {/* Formulário original */}
             {mostrarFormulario && (
                 <div className="fundo-modal">
                     <div className="modal-denuncia">
-                        <button
-                            type="button"
-                            className="fechar-modal"
-                            onClick={() => setMostrarFormulario(false)}
-                        >
+                        <button type="button" className="fechar-modal" onClick={fecharFormulario}>
                             ×
                         </button>
 
                         <h2>Nova Denúncia</h2>
                         <p>Registre uma ocorrência ambiental.</p>
 
-                        <form
-                            onSubmit={(evento) => {
-                                evento.preventDefault()
+                        <form onSubmit={enviarDenuncia}>
+                            {mensagemErro && (
+                                <p className="mensagem-formulario erro">{mensagemErro}</p>
+                            )}
 
-                                alert(
-                                    'Denúncia registrada com sucesso! (SO TESTE)'
-                                )
+                            <label>Título</label>
+                            <input
+                                type="text"
+                                placeholder="Ex.: Lixo acumulado na calçada"
+                                maxLength={100}
+                                value={titulo}
+                                onChange={(e) => setTitulo(e.target.value)}
+                                required
+                            />
 
-                                setMostrarFormulario(false)
-                            }}
-                        >
                             <label>Tipo de ocorrência</label>
-
-                            <select required defaultValue="">
-                                <option value="" disabled>
-                                    Selecione o tipo
-                                </option>
-
-                                <option value="DESCARTE_IRREGULAR">
-                                    Descarte irregular
-                                </option>
-
-                                <option value="QUEIMADA">
-                                    Queimada
-                                </option>
-
-                                <option value="DESMATAMENTO">
-                                    Desmatamento
-                                </option>
-
-                                <option value="ABANDONO">
-                                    Abandono de área verde
-                                </option>
+                            <select required value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                                <option value="" disabled>Selecione o tipo</option>
+                                <option value="DESCARTE_IRREGULAR">Descarte irregular</option>
+                                <option value="QUEIMADA">Queimada</option>
+                                <option value="DESMATAMENTO">Desmatamento</option>
+                                <option value="ABANDONO">Abandono de área verde</option>
                             </select>
 
                             <label>Descrição</label>
-
                             <textarea
                                 placeholder="Descreva o problema encontrado..."
+                                maxLength={500}
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
                                 required
                             />
 
-                            <label>Fotografia</label>
-
+                            <label>Link da foto (opcional)</label>
                             <input
-                                type="file"
-                                accept="image/*"
-                                required
+                                type="url"
+                                placeholder="https://..."
+                                value={imagem}
+                                onChange={(e) => setImagem(e.target.value)}
                             />
 
                             <label>Localização</label>
+                            <p>
+                                {posicaoEscolhida
+                                    ? `${posicaoEscolhida[0].toFixed(5)}, ${posicaoEscolhida[1].toFixed(5)}`
+                                    : 'Nenhum local escolhido'}
+                            </p>
 
-                            <input
-                                type="text"
-                                placeholder="Ex.: Rua das Flores, Ferraz de Vasconcelos"
-                                required
-                            />
-
-                            <button
-                                type="submit"
-                                className="botao-enviar-denuncia"
-                            >
+                            <button type="submit" className="botao-enviar-denuncia">
                                 Enviar denúncia
                             </button>
                         </form>
                     </div>
                 </div>
             )}
+
 
             <RodapeNav />
         </main>

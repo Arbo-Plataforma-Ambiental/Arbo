@@ -51,3 +51,9 @@ a {
   background: #fbe9e9;
   border: 1px solid #f1c4c4;
 }
+
+.mensagem-formulario.sucesso {
+  color: #19451F;
+  background: #e3f1e4;
+  border: 1px solid #bfdcc1;
+}
