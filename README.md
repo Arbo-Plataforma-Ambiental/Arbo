@@ -1,11 +1,13 @@
 
 <div align="center">
 
+
 <img
-  src="./frontend/public/identidade-visual-arbo/Logotipo%20Arbo%20Verde%20com%20Folha%20Integrada%20(1).png"
+  src="./frontend/public/identidade-visual-arbo/Logotipo Arbo Verde com Folha Integrada.png"
   alt="Logotipo ARBO"
   width="480"
 />
+
 
 ### 🌱 Tecnologia que conecta pessoas, natureza e transformação
 
@@ -18,6 +20,19 @@
 </div>
 
 ---
+
+## 👥 Equipe de desenvolvimento
+
+Projeto Integrador desenvolvido por estudantes de **Análise e Desenvolvimento de Sistemas — FATEC Ferraz de Vasconcelos**.
+
+| Integrante | RA / RM | GitHub |
+|---|---|---|
+| Thiago Ribeiro | 2920482521012 | [@thiagoConsta](https://github.com/thiagoConsta) |
+| Murilo Magalhães | RM | [@MuriloMgl](https://github.com/MuriloMgl) |
+| Felipe Martins | RM | [@felipekntz](https://github.com/felipekntz) |
+
+---
+
 
 ## 🌿 Sobre o projeto
 
@@ -114,7 +129,7 @@ O ARBO oferece um ambiente digital que permite:
 
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="55" title="MySQL" alt="MySQL"/>
 &nbsp;&nbsp;
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/h2database/h2database-original.svg" width="55" title="H2 Database" alt="H2 Database"/>
+<img src="https://img.shields.io/badge/H2-Database-2E7D32?style=for-the-badge" height="40" title="H2 Database" alt="H2 Database"/>
 
 **MySQL • H2 (ambiente de desenvolvimento)**
 
@@ -124,11 +139,14 @@ O ARBO oferece um ambiente digital que permite:
 
 <div align="center">
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/leaflet/leaflet-original.svg" width="55" title="Leaflet" alt="Leaflet"/>
+<img src="https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white" height="40" title="Leaflet" alt="Leaflet"/>
+&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white" height="40" title="OpenStreetMap" alt="OpenStreetMap"/>
 
 **Leaflet • OpenStreetMap**
 
 </div>
+
 
 ### 📊 Monitoramento e ferramentas
 
@@ -294,18 +312,6 @@ A integração com o servidor Prometheus está em desenvolvimento, com o objetiv
 | 📖 Documentação Swagger | Em breve |
 
 > Os endereços serão adicionados após a publicação das aplicações.
-
----
-
-## 👥 Equipe de desenvolvimento
-
-Projeto Integrador desenvolvido por estudantes de **Análise e Desenvolvimento de Sistemas — FATEC Ferraz de Vasconcelos**.
-
-| Integrante | RA / RM | GitHub |
-|---|---|---|
-| Thiago Ribeiro | 2920482521012 | [@thiagoConsta](https://github.com/thiagoConsta) |
-| Murilo Magalhães | RM | [@MuriloMgl](https://github.com/MuriloMgl) |
-| Felipe Martins | RM | [@felipekntz](https://github.com/felipekntz) |
 
 ---
 
