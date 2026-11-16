@@ -6,6 +6,7 @@ import LogoArbo from './components/LogoArbo'
 import Perfil from './components/Perfil'
 import Mapa from './components/Mapa'
 import Ongs from './components/Ongs'
+import RotaProtegida from './components/RotaProtegida'
 
 function TelaLogin({ onEntrar }: { onEntrar: () => void }) {
   return (
@@ -85,9 +86,9 @@ function App() {
         }
       />
 
-      <Route path="/perfil" element={<Perfil />} />
-      <Route path="/mapa" element={<Mapa />} />
-      <Route path="/ongs" element={<Ongs />} />
+      <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
+      <Route path="/mapa" element={<RotaProtegida><Mapa /></RotaProtegida>} />
+      <Route path="/ongs" element={<RotaProtegida><Ongs /></RotaProtegida>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

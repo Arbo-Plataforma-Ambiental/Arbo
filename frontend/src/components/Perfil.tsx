@@ -137,10 +137,11 @@ const ICONES = {
     ),
 }
 
+
 function carregarPerfil(): DadosPerfil {
     try {
-        const salvo = localStorage.getItem(CHAVE_PERFIL)
-        return salvo ? { ...PERFIL_PADRAO, ...JSON.parse(salvo) } : PERFIL_PADRAO
+        const salvo = localStorage.getItem('arbo-usuario')
+        return salvo ? JSON.parse(salvo) : PERFIL_PADRAO
     } catch {
         return PERFIL_PADRAO
     }
@@ -494,8 +495,10 @@ function Perfil() {
                     <button
                         type="button"
                         className="botao-perfil perigo"
-                        onClick={() => navegar('/', { replace: true })}
-                    >
+                        onClick={() => {
+                            localStorage.removeItem('arbo-usuario')
+                            navegar('/', { replace: true })
+                        }}                    >
                         Sair
                     </button>
                 </div>
