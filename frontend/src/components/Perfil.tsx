@@ -1,9 +1,10 @@
+import { API_URL } from '../config'
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Perfil.css'
 import LogoArbo from './LogoArbo'
 import RodapeNav from './RodapeNav'
-import { ocorrencias } from '../data/ocorrencias'
+
 
 type DadosPerfil = {
     nome: string
@@ -75,6 +76,18 @@ const ROTULO_STATUS: Record<string, string> = {
     RESOLVIDA: 'Resolvida',
 }
 
+type Ocorrencia = {
+    id: number
+    titulo: string
+    descricao: string
+    tipo: string
+    latitude: number
+    longitude: number
+    imagem: string | null
+    status: string
+    usuarioId: number
+}
+
 const ICONES = {
     pessoa: (
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -137,10 +150,11 @@ const ICONES = {
     ),
 }
 
+
 function carregarPerfil(): DadosPerfil {
     try {
-        const salvo = localStorage.getItem(CHAVE_PERFIL)
-        return salvo ? { ...PERFIL_PADRAO, ...JSON.parse(salvo) } : PERFIL_PADRAO
+        const salvo = localStorage.getItem('arbo-usuario')
+        return salvo ? JSON.parse(salvo) : PERFIL_PADRAO
     } catch {
         return PERFIL_PADRAO
     }
@@ -226,9 +240,56 @@ function Perfil() {
     const [rascunho, setRascunho] = useState(perfil)
     const [modal, setModal] = useState<ModalAberto>(null)
     const [busca, setBusca] = useState('')
+    const [minhas, setMinhas] = useState<Ocorrencia[]>([])
+    const [emEdicao, setEmEdicao] = useState<Ocorrencia | null>(null)
+    const [mensagem, setMensagem] = useState('')
+
+    useEffect(() => {
+        const usuario = JSON.parse(localStorage.getItem('arbo-usuario') ?? '{}')
+        fetch(`${API_URL}/ocorrencias`)
+            .then((resposta) => resposta.json())
+            .then((todas: Ocorrencia[]) => setMinhas(todas.filter((o) => o.usuarioId === usuario.id)))
+            .catch(() => setMensagem('Não foi possível carregar suas denúncias.'))
+    }, [])
+
+    async function excluirDenuncia(ocorrencia: Ocorrencia) {
+        if (!window.confirm(`Excluir "${ocorrencia.titulo}"?`)) return
+
+        const resposta = await fetch(`${API_URL}/ocorrencias/${ocorrencia.id}`, { method: 'DELETE' })
+
+        if (resposta.ok) {
+            setMinhas(minhas.filter((o) => o.id !== ocorrencia.id))
+            setMensagem('Denúncia excluída.')
+        } else {
+            setMensagem('Não foi possível excluir.')
+        }
+    }
+
+    async function salvarEdicao(evento: FormEvent<HTMLFormElement>) {
+        evento.preventDefault()
+        if (!emEdicao) return
+
+        const resposta = await fetch(`${API_URL}/ocorrencias/${emEdicao.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(emEdicao),
+        })
+
+        if (resposta.ok) {
+            const atualizada = await resposta.json()
+            setMinhas(minhas.map((o) => (o.id === atualizada.id ? atualizada : o)))
+            setEmEdicao(null)
+            setMensagem('Denúncia atualizada.')
+        } else {
+            const corpo = await resposta.json()
+            setMensagem(corpo.erro ?? 'Não foi possível salvar.')
+        }
+    }
 
     function fecharModal() {
         setModal(null)
+        setEmEdicao(null)
+        setMensagem('')
     }
 
     function abrirEdicao() {
@@ -257,7 +318,7 @@ function Perfil() {
     }
 
     const estatisticas = [
-        { rotulo: 'Denúncias', valor: ocorrencias.length, icone: ICONES.alerta },
+        { rotulo: 'Denúncias', valor: minhas.length, icone: ICONES.alerta },
         { rotulo: 'Mutirões', valor: MUTIROES_PARTICIPADOS.length, icone: ICONES.grupo },
         { rotulo: 'Árvores', valor: ARVORES_PLANTADAS, icone: ICONES.folha },
     ]
@@ -344,7 +405,7 @@ function Perfil() {
                     <OpcaoPerfil
                         icone={ICONES.pino}
                         rotulo="Minhas denúncias"
-                        contagem={ocorrencias.length}
+                        contagem={minhas.length}
                         onClick={() => setModal('denuncias')}
                     />
                     <OpcaoPerfil
@@ -427,20 +488,66 @@ function Perfil() {
                 descricao="Acompanhe o andamento das ocorrências que você registrou."
                 onFechar={fecharModal}
             >
-                <ul className="lista-modal">
-                    {ocorrencias.map((ocorrencia) => (
-                        <li className="item-modal" key={ocorrencia.id}>
-                            <img src={ocorrencia.imagem} alt="" loading="lazy" />
+                {mensagem && <p className="mensagem-formulario sucesso">{mensagem}</p>}
 
-                            <div>
-                                <strong>{ocorrencia.titulo}</strong>
-                                <span className={`status-denuncia ${ocorrencia.status.toLowerCase()}`}>
-                                    {ROTULO_STATUS[ocorrencia.status]}
-                                </span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                {emEdicao ? (
+                    <form className="formulario-perfil" onSubmit={salvarEdicao}>
+                        <div className="campo-perfil">
+                            <label htmlFor="titulo-denuncia">Título</label>
+                            <input
+                                id="titulo-denuncia"
+                                maxLength={100}
+                                value={emEdicao.titulo}
+                                onChange={(e) => setEmEdicao({ ...emEdicao, titulo: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="campo-perfil">
+                            <label htmlFor="descricao-denuncia">Descrição</label>
+                            <input
+                                id="descricao-denuncia"
+                                maxLength={500}
+                                value={emEdicao.descricao}
+                                onChange={(e) => setEmEdicao({ ...emEdicao, descricao: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="acoes-modal">
+                            <button type="button" className="botao-perfil secundario" onClick={() => setEmEdicao(null)}>
+                                Cancelar
+                            </button>
+                            <button type="submit" className="botao-perfil">Salvar</button>
+                        </div>
+                    </form>
+                ) : (
+                    <ul className="lista-modal">
+                        {minhas.length === 0 && <p>Você ainda não registrou nenhuma denúncia.</p>}
+
+                        {minhas.map((ocorrencia) => (
+                            <li className="item-modal" key={ocorrencia.id}>
+                                {ocorrencia.imagem && <img src={ocorrencia.imagem} alt="" loading="lazy" />}
+
+                                <div className="texto-item-modal">
+                                    <strong>{ocorrencia.titulo}</strong>
+                                    <span className={`status-denuncia ${ocorrencia.status.toLowerCase()}`}>
+                                        {ROTULO_STATUS[ocorrencia.status]}
+                                    </span>
+                                </div>
+
+                                <div className="acoes-item-modal">
+                                    <button type="button" onClick={() => { setMensagem(''); setEmEdicao(ocorrencia) }}>
+                                        Editar
+                                    </button>
+                                    <button type="button" className="perigo" onClick={() => excluirDenuncia(ocorrencia)}>
+                                        Excluir
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
                 <div className="acoes-modal">
                     <Link to="/mapa" className="botao-perfil">
@@ -494,8 +601,10 @@ function Perfil() {
                     <button
                         type="button"
                         className="botao-perfil perigo"
-                        onClick={() => navegar('/', { replace: true })}
-                    >
+                        onClick={() => {
+                            localStorage.removeItem('arbo-usuario')
+                            navegar('/', { replace: true })
+                        }}                    >
                         Sair
                     </button>
                 </div>

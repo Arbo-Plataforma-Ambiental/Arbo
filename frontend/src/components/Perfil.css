@@ -702,3 +702,34 @@
         padding: 20px;
     }
 }
+
+/* editar e excluir denuncias */
+.item-modal .texto-item-modal {
+    flex: 1;
+}
+
+.item-modal .acoes-item-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.acoes-item-modal button {
+    padding: 5px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background: var(--cor-superficie);
+    color: var(--cor-texto);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.acoes-item-modal button:hover {
+    background: var(--cor-fundo);
+}
+
+.acoes-item-modal button.perigo {
+    color: var(--cor-perigo);
+    border-color: var(--cor-perigo);
+}

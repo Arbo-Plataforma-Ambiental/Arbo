@@ -38,3 +38,22 @@ input {
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.mensagem-formulario {
+  margin: 0 0 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.mensagem-formulario.erro {
+  color: #9b2c2c;
+  background: #fbe9e9;
+  border: 1px solid #f1c4c4;
+}
+
+.mensagem-formulario.sucesso {
+  color: #19451F;
+  background: #e3f1e4;
+  border: 1px solid #bfdcc1;
+}

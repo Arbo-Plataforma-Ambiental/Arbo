@@ -1,4 +1,5 @@
 .pagina-mapa {
+    position: relative;
     width: 100%;
     height: calc(100vh - 70px);
 }
@@ -84,7 +85,7 @@
 .botao-nova-denuncia {
     position: absolute;
     right: 20px;
-    bottom: 90px; /* 70px da barra inferior + 20px, alinhado com a legenda */
+    bottom: 90px;
     z-index: 1000;
 
     padding: 14px 22px;
@@ -97,10 +98,6 @@
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
-}
-
-.botao-nova-denuncia:hover {
-    background: var(--cor-principal-hover);
 }
 
 .botao-nova-denuncia:hover {
@@ -202,4 +199,130 @@
 
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
     outline: none;
+}
+
+/* Mantido para compatibilidade com o estilo anterior */
+.botao-mapa-calor {
+    margin: 12px 0;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2b8a48;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botao-mapa-calor:hover {
+    background-color: #216b38;
+}
+
+/* ===================================== */
+/* CONTROLES DE OCORRÊNCIAS E MAPA TÉRMICO */
+/* ===================================== */
+
+.controles-mapa {
+    position: absolute;
+    top: 85px;
+    right: 20px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.controles-mapa .botao-controle-mapa {
+    position: static;
+    display: block;
+
+    width: 190px;
+    margin: 0;
+    padding: 11px 14px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #2b8a48;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.controles-mapa .botao-controle-mapa:hover {
+    background-color: #216b38;
+}
+
+/* ===================================== */
+/* RESPONSIVIDADE */
+/* ===================================== */
+
+@media (max-width: 600px) {
+    .pesquisa-mapa {
+        top: 15px;
+        width: calc(100% - 30px);
+    }
+
+    .controles-mapa {
+        top: 85px;
+        right: 10px;
+        gap: 8px;
+    }
+
+    .controles-mapa .botao-controle-mapa {
+        width: 165px;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .botao-nova-denuncia {
+        right: 10px;
+        bottom: 80px;
+    }
+
+    .legenda-mapa {
+        left: 10px;
+        bottom: 20px;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
+.aviso-mapa {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2500;
+}
+
+.aviso-escolher-local {
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%);
+    z-index: 1500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 30px;
+    background: var(--cor-verde-escuro);
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    
+}
+
+.aviso-escolher-local button {
+    border: none;
+    background: none;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
 }

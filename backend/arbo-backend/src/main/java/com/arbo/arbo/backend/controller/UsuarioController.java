@@ -3,8 +3,8 @@ package com.arbo.arbo.backend.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,8 @@ import com.arbo.arbo.backend.dto.UsuarioResponseDTO;
 import com.arbo.arbo.backend.model.Usuario;
 import com.arbo.arbo.backend.service.UsuarioService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -30,29 +31,25 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-
     @GetMapping
     public List<UsuarioResponseDTO> listar() {
         return usuarioService.listarTodos()
                 .stream()
                 .map(this::converterParaDTO)
                 .toList();
-    } // get usuarios, com camada de segurança DTO
+    }
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> cadastrar(
-            @RequestBody UsuarioRequestDTO dto) {
+            @Valid @RequestBody UsuarioRequestDTO dto) {
 
-        Usuario usuario = converterParaEntidade(dto);
-        Usuario salvo = usuarioService.cadastrar(usuario);
+        Usuario salvo = usuarioService.cadastrar(converterParaEntidade(dto));
 
-        return ResponseEntity.ok(converterParaDTO(salvo));
-    } // create usuarios, com camada de segurança DTO
+        return ResponseEntity.status(HttpStatus.CREATED).body(converterParaDTO(salvo));
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorId(
-            @PathVariable Long id) {
-
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         return usuarioService.buscarPorId(id)
                 .map(this::converterParaDTO)
                 .map(ResponseEntity::ok)
@@ -62,10 +59,9 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody UsuarioRequestDTO dto) {
+            @Valid @RequestBody UsuarioRequestDTO dto) {
 
-        Usuario usuario = converterParaEntidade(dto);
-        Usuario atualizado = usuarioService.atualizar(id, usuario);
+        Usuario atualizado = usuarioService.atualizar(id, converterParaEntidade(dto));
 
         if (atualizado == null) {
             return ResponseEntity.notFound().build();
@@ -85,16 +81,14 @@ public class UsuarioController {
         usuarioService.excluir(id);
 
         return ResponseEntity.noContent().build();
-
     }
 
     private UsuarioResponseDTO converterParaDTO(Usuario usuario) {
-    return new UsuarioResponseDTO(
-        usuario.getId(),
-        usuario.getNome(),
-        usuario.getEmail(),
-        usuario.getTipo()
-    );
+        return new UsuarioResponseDTO(
+                usuario.getId(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getTipo());
     }
 
     private Usuario converterParaEntidade(UsuarioRequestDTO dto) {
@@ -107,5 +101,4 @@ public class UsuarioController {
 
         return usuario;
     }
-
 }
