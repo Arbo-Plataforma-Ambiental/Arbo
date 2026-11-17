@@ -255,7 +255,7 @@ function Perfil() {
     async function excluirDenuncia(ocorrencia: Ocorrencia) {
         if (!window.confirm(`Excluir "${ocorrencia.titulo}"?`)) return
 
-        `${API_URL}/ocorrencias/${ocorrencia.id}`
+        const resposta = await fetch(`${API_URL}/ocorrencias/${ocorrencia.id}`, { method: 'DELETE' })
 
         if (resposta.ok) {
             setMinhas(minhas.filter((o) => o.id !== ocorrencia.id))
