@@ -1,4 +1,3 @@
-
 <div align="center">
 
 
@@ -13,7 +12,7 @@
 
 **Plataforma colaborativa de monitoramento e preservação ambiental**
 
-![Status](https://img.shields.io/badge/STATUS-EM_DESENVOLVIMENTO-2E7D32?style=for-the-badge)
+![Status](https://img.shields.io/badge/STATUS-PUBLICADO-2E7D32?style=for-the-badge)
 ![Projeto](https://img.shields.io/badge/PROJETO-INTEGRADOR-388E3C?style=for-the-badge)
 ![Instituição](https://img.shields.io/badge/FATEC-FERRAZ_DE_VASCONCELOS-43A047?style=for-the-badge)
 
@@ -164,7 +163,7 @@ O ARBO oferece um ambiente digital que permite:
 
 </div>
 
-> **Monitoramento:** a exportação de métricas com Spring Boot Actuator e Micrometer foi configurada. A coleta com Prometheus e a execução via Docker estão em implantação.
+> **Monitoramento:** o uso de Spring Boot Actuator, Micrometer e Prometheus está planejado para uma próxima etapa. O back-end já é publicado via **Docker** (`Dockerfile`).
 
 ---
 
@@ -176,7 +175,14 @@ O back-end segue uma arquitetura em camadas, separando responsabilidades para fa
     ├── controller/    # Endpoints HTTP da API
     ├── service/       # Regras de negócio
     ├── repository/    # Acesso ao banco de dados
-    └── model/         # Entidades do sistema
+    ├── model/         # Entidades do sistema (JPA)
+    ├── dto/           # Dados de entrada/saída da API, com validações
+    ├── config/        # Configuração de CORS
+    └── exception/     # Tratamento global de erros
+
+    frontend/src/
+    ├── components/    # Telas e componentes React (Login, Mapa, Perfil, ONGs...)
+    └── config.ts      # Endereço da API (variável de ambiente VITE_API_URL)
 
 ### Responsabilidades
 
@@ -186,6 +192,21 @@ O back-end segue uma arquitetura em camadas, separando responsabilidades para fa
 | Service | Implementa as regras de negócio |
 | Repository | Gerencia a persistência dos dados |
 | Model | Representa as entidades do sistema |
+| DTO | Define o formato e as validações dos dados que entram e saem da API (e esconde a senha nas respostas) |
+| Exception | `@RestControllerAdvice` que transforma erros em JSON com o código HTTP adequado |
+
+---
+
+## 🔐 Autenticação e segurança
+
+- **Cadastro** (`POST /usuarios`) com validação dos dados.
+- **Senhas criptografadas com BCrypt**: o banco guarda apenas o hash, nunca a senha.
+- **Login** (`POST /auth/login`): confere o e-mail e a senha com BCrypt e responde **401** se estiverem incorretos.
+- As respostas da API **nunca devolvem a senha** (uso de DTOs).
+- **Front-end**: as telas de mapa, perfil e ONGs só podem ser acessadas por usuários logados (rotas protegidas).
+- **CORS** liberado apenas para o endereço do front-end publicado.
+
+> **Próxima evolução:** proteger também os endpoints da API com token JWT, para que a própria API exija autenticação em cada requisição.
 
 ---
 
@@ -201,6 +222,12 @@ O back-end segue uma arquitetura em camadas, separando responsabilidades para fa
 | PUT | `/usuarios/{id}` | Atualiza um usuário |
 | DELETE | `/usuarios/{id}` | Exclui um usuário |
 
+### 🔑 Autenticação
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/auth/login` | Recebe e-mail e senha e devolve os dados do usuário |
+
 ### 🌳 Ocorrências
 
 | Método | Endpoint | Descrição |
@@ -210,6 +237,37 @@ O back-end segue uma arquitetura em camadas, separando responsabilidades para fa
 | POST | `/ocorrencias` | Registra uma ocorrência |
 | PUT | `/ocorrencias/{id}` | Atualiza uma ocorrência |
 | DELETE | `/ocorrencias/{id}` | Exclui uma ocorrência |
+
+### 📟 Códigos de resposta
+
+| Código | Quando acontece |
+|---|---|
+| 200 OK | Consulta, login ou atualização bem-sucedida |
+| 201 Created | Cadastro realizado |
+| 204 No Content | Exclusão realizada |
+| 400 Bad Request | Dados inválidos (campo obrigatório vazio, e-mail mal formatado...) |
+| 401 Unauthorized | E-mail ou senha incorretos no login |
+| 404 Not Found | Registro não encontrado |
+| 409 Conflict | E-mail já cadastrado |
+
+Os erros sempre voltam no formato `{ "erro": "mensagem", "campos": { "campo": "mensagem" } }`.
+
+A documentação interativa (Swagger) fica em `/swagger-ui.html`.
+
+---
+
+## 🗄️ Banco de dados
+
+- **Produção:** MySQL 8, hospedado no Railway.
+- **Desenvolvimento local:** H2 em memória, para qualquer integrante rodar o projeto sem instalar um banco.
+- A troca entre os dois é feita por **variáveis de ambiente**, sem alterar o código.
+
+O script de criação do banco, com as tabelas e o relacionamento entre `usuario` e `ocorrencia`, está em **[`backend/banco/arbo.sql`](backend/banco/arbo.sql)**. Na aplicação publicada, as tabelas são criadas automaticamente pelo Hibernate a partir das entidades.
+
+| Tabela | Descrição |
+|---|---|
+| `usuario` | Usuários do sistema (senha armazenada com BCrypt) |
+| `ocorrencia` | Ocorrências ambientais, ligadas ao usuário que as registrou (`usuario_id` → `usuario.id`) |
 
 ---
 
@@ -254,13 +312,17 @@ http://localhost:8080
 
 ### 🗄️ Configuração do banco de dados
 
-O projeto possui suporte ao MySQL e utiliza o H2 em memória na configuração atual de desenvolvimento.
+Sem nenhuma configuração, a API usa o **H2 em memória** (os dados são apagados ao reiniciar).
 
-Para utilizar o H2, mantenha as configurações correspondentes no arquivo:
+Para usar o **MySQL**, execute o script `backend/banco/arbo.sql` e defina as variáveis de ambiente antes de iniciar a API:
 
-`backend/arbo-backend/src/main/resources/application.properties`
-
-Para utilizar o MySQL, configure a conexão no mesmo arquivo e, quando necessário, execute o script SQL do projeto.
+| Variável | Exemplo |
+|---|---|
+| `DB_URL` | `jdbc:mysql://localhost:3306/arbo?serverTimezone=America/Sao_Paulo` |
+| `DB_USERNAME` | `root` |
+| `DB_PASSWORD` | `sua_senha` |
+| `DDL_AUTO` | `update` |
+| `ARBO_CORS_ALLOWED_ORIGINS` | endereço do front-end (padrão: `http://localhost:5173`) |
 
 Não publique credenciais de banco de dados no repositório.
 
@@ -272,6 +334,8 @@ Abra outro terminal na raiz do repositório:
     npm install
     npm run dev
 
+Por padrão o front chama a API em `http://localhost:8080`. Para usar outro endereço, defina a variável `VITE_API_URL` (por exemplo, num arquivo `.env` dentro de `frontend`).
+
 O Vite exibirá o endereço local da aplicação, geralmente:
 
 http://localhost:5173
@@ -280,26 +344,15 @@ Mantenha o back-end em execução para utilizar as funcionalidades que dependem 
 
 ---
 
-## 📈 Monitoramento da aplicação
+## 🚀 Publicação
 
-O ARBO utiliza Spring Boot Actuator e Micrometer para disponibilizar métricas operacionais do back-end.
-
-Com a aplicação em execução, os endpoints de monitoramento podem ser acessados em:
-
-| Endpoint | Finalidade |
+| Parte | Hospedagem |
 |---|---|
-| `/actuator/health` | Verificar a saúde da aplicação |
-| `/actuator/prometheus` | Exportar métricas no formato Prometheus |
+| Front-end (React) | Vercel |
+| API (Spring Boot) | Railway, via `Dockerfile` |
+| Banco de dados (MySQL) | Railway |
 
-A integração com o servidor Prometheus está em desenvolvimento, com o objetivo de acompanhar indicadores como:
-
-- Consumo de memória da JVM.
-- Utilização de CPU.
-- Requisições HTTP.
-- Tempo de resposta da API.
-- Disponibilidade do back-end.
-
-> Os endpoints de monitoramento devem ter seu acesso revisado antes da publicação em produção.
+As configurações de produção (conexão com o banco, endereço da API e CORS) são feitas por **variáveis de ambiente** em cada serviço, sem credenciais no código.
 
 ---
 
@@ -307,11 +360,9 @@ A integração com o servidor Prometheus está em desenvolvimento, com o objetiv
 
 | Serviço | Link |
 |---|---|
-| 🌿 Front-end publicado | Em breve |
-| ⚙️ Back-end publicado | Em breve |
-| 📖 Documentação Swagger | Em breve |
-
-> Os endereços serão adicionados após a publicação das aplicações.
+| 🌿 Front-end publicado | https://arbo-plataforma.vercel.app |
+| ⚙️ Back-end publicado | https://arbo-production-87d5ae34.up.railway.app |
+| 📖 Documentação Swagger | https://arbo-production-87d5ae34.up.railway.app/swagger-ui.html |
 
 ---
 
