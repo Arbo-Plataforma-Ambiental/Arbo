@@ -1,4 +1,4 @@
-
+import { API_URL } from '../config'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './Mapa.css'
@@ -63,7 +63,7 @@ function Mapa() {
 
     // roda u a vez quando a tela abre e busca ocorrências
     useEffect(() => {
-        fetch('http://localhost:8080/ocorrencias')
+        fetch(`${API_URL}/ocorrencias`)
             .then((resposta) => resposta.json())
             .then((dados) => setOcorrencias(dados))
             .catch((erro) => console.error('Erro ao carregar ocorrências: ', erro))
@@ -106,7 +106,7 @@ function Mapa() {
         const usuario = JSON.parse(localStorage.getItem('arbo-usuario') ?? '{}')
 
         try {
-            const resposta = await fetch('http://localhost:8080/ocorrencias', {
+            const resposta = await fetch(`${API_URL}/ocorrencias`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

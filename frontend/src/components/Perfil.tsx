@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Perfil.css'
@@ -245,8 +246,7 @@ function Perfil() {
 
     useEffect(() => {
         const usuario = JSON.parse(localStorage.getItem('arbo-usuario') ?? '{}')
-
-        fetch('http://localhost:8080/ocorrencias')
+        fetch(`${API_URL}/ocorrencias`)
             .then((resposta) => resposta.json())
             .then((todas: Ocorrencia[]) => setMinhas(todas.filter((o) => o.usuarioId === usuario.id)))
             .catch(() => setMensagem('Não foi possível carregar suas denúncias.'))
@@ -255,7 +255,7 @@ function Perfil() {
     async function excluirDenuncia(ocorrencia: Ocorrencia) {
         if (!window.confirm(`Excluir "${ocorrencia.titulo}"?`)) return
 
-        const resposta = await fetch(`http://localhost:8080/ocorrencias/${ocorrencia.id}`, { method: 'DELETE' })
+        `${API_URL}/ocorrencias/${ocorrencia.id}`
 
         if (resposta.ok) {
             setMinhas(minhas.filter((o) => o.id !== ocorrencia.id))
@@ -269,7 +269,7 @@ function Perfil() {
         evento.preventDefault()
         if (!emEdicao) return
 
-        const resposta = await fetch(`http://localhost:8080/ocorrencias/${emEdicao.id}`, {
+        const resposta = await fetch(`${API_URL}/ocorrencias/${emEdicao.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(emEdicao),
@@ -488,72 +488,72 @@ function Perfil() {
                 descricao="Acompanhe o andamento das ocorrências que você registrou."
                 onFechar={fecharModal}
             >
-                    {mensagem && <p className="mensagem-formulario sucesso">{mensagem}</p>}
+                {mensagem && <p className="mensagem-formulario sucesso">{mensagem}</p>}
 
-                    {emEdicao ? (
-                        <form className="formulario-perfil" onSubmit={salvarEdicao}>
-                            <div className="campo-perfil">
-                                <label htmlFor="titulo-denuncia">Título</label>
-                                <input
-                                    id="titulo-denuncia"
-                                    maxLength={100}
-                                    value={emEdicao.titulo}
-                                    onChange={(e) => setEmEdicao({ ...emEdicao, titulo: e.target.value })}
-                                    required
-                                />
-                            </div>
+                {emEdicao ? (
+                    <form className="formulario-perfil" onSubmit={salvarEdicao}>
+                        <div className="campo-perfil">
+                            <label htmlFor="titulo-denuncia">Título</label>
+                            <input
+                                id="titulo-denuncia"
+                                maxLength={100}
+                                value={emEdicao.titulo}
+                                onChange={(e) => setEmEdicao({ ...emEdicao, titulo: e.target.value })}
+                                required
+                            />
+                        </div>
 
-                            <div className="campo-perfil">
-                                <label htmlFor="descricao-denuncia">Descrição</label>
-                                <input
-                                    id="descricao-denuncia"
-                                    maxLength={500}
-                                    value={emEdicao.descricao}
-                                    onChange={(e) => setEmEdicao({ ...emEdicao, descricao: e.target.value })}
-                                    required
-                                />
-                            </div>
+                        <div className="campo-perfil">
+                            <label htmlFor="descricao-denuncia">Descrição</label>
+                            <input
+                                id="descricao-denuncia"
+                                maxLength={500}
+                                value={emEdicao.descricao}
+                                onChange={(e) => setEmEdicao({ ...emEdicao, descricao: e.target.value })}
+                                required
+                            />
+                        </div>
 
-                            <div className="acoes-modal">
-                                <button type="button" className="botao-perfil secundario" onClick={() => setEmEdicao(null)}>
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="botao-perfil">Salvar</button>
-                            </div>
-                        </form>
-                    ) : (
-                        <ul className="lista-modal">
-                            {minhas.length === 0 && <p>Você ainda não registrou nenhuma denúncia.</p>}
+                        <div className="acoes-modal">
+                            <button type="button" className="botao-perfil secundario" onClick={() => setEmEdicao(null)}>
+                                Cancelar
+                            </button>
+                            <button type="submit" className="botao-perfil">Salvar</button>
+                        </div>
+                    </form>
+                ) : (
+                    <ul className="lista-modal">
+                        {minhas.length === 0 && <p>Você ainda não registrou nenhuma denúncia.</p>}
 
-                            {minhas.map((ocorrencia) => (
-                                <li className="item-modal" key={ocorrencia.id}>
-                                    {ocorrencia.imagem && <img src={ocorrencia.imagem} alt="" loading="lazy" />}
+                        {minhas.map((ocorrencia) => (
+                            <li className="item-modal" key={ocorrencia.id}>
+                                {ocorrencia.imagem && <img src={ocorrencia.imagem} alt="" loading="lazy" />}
 
-                                    <div className="texto-item-modal">
-                                        <strong>{ocorrencia.titulo}</strong>
-                                        <span className={`status-denuncia ${ocorrencia.status.toLowerCase()}`}>
-                                            {ROTULO_STATUS[ocorrencia.status]}
-                                        </span>
-                                    </div>
+                                <div className="texto-item-modal">
+                                    <strong>{ocorrencia.titulo}</strong>
+                                    <span className={`status-denuncia ${ocorrencia.status.toLowerCase()}`}>
+                                        {ROTULO_STATUS[ocorrencia.status]}
+                                    </span>
+                                </div>
 
-                                    <div className="acoes-item-modal">
-                                        <button type="button" onClick={() => { setMensagem(''); setEmEdicao(ocorrencia) }}>
-                                            Editar
-                                        </button>
-                                        <button type="button" className="perigo" onClick={() => excluirDenuncia(ocorrencia)}>
-                                            Excluir
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                                <div className="acoes-item-modal">
+                                    <button type="button" onClick={() => { setMensagem(''); setEmEdicao(ocorrencia) }}>
+                                        Editar
+                                    </button>
+                                    <button type="button" className="perigo" onClick={() => excluirDenuncia(ocorrencia)}>
+                                        Excluir
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-                    <div className="acoes-modal">
-                        <Link to="/mapa" className="botao-perfil">
-                            Ver no mapa
-                        </Link>
-                    </div>
+                <div className="acoes-modal">
+                    <Link to="/mapa" className="botao-perfil">
+                        Ver no mapa
+                    </Link>
+                </div>
             </ModalPerfil>
 
             <ModalPerfil

@@ -1,4 +1,4 @@
-
+import { API_URL } from "../config"
 import { useState } from "react"
 
 type FormularioLoginProps = {
@@ -21,7 +21,7 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
     if (modoCadastro) {
       try {
         const resposta = await fetch(
-          "http://localhost:8080/usuarios",
+          `${API_URL}/usuarios`,
           {
             method: "POST",
             headers: {
@@ -57,7 +57,7 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
     setMensagemErro("")
 
     try {
-      const resposta = await fetch("http://localhost:8080/auth/login", {
+           const resposta = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email, senha: senha }),
@@ -89,7 +89,7 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
         className="formulario-login"
         onSubmit={lidarComEnvio}
       >
-        
+
         {mensagemErro && (
           <p className="mensagem-formulario erro">{mensagemErro}</p>
         )}
