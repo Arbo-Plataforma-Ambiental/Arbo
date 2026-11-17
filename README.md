@@ -27,8 +27,8 @@ Projeto Integrador desenvolvido por estudantes de **Análise e Desenvolvimento d
 | Integrante | RA / RM | GitHub |
 |---|---|---|
 | Thiago Ribeiro | 2920482521012 | [@thiagoConsta](https://github.com/thiagoConsta) |
-| Murilo Magalhães | RM | [@MuriloMgl](https://github.com/MuriloMgl) |
-| Felipe Martins | RM | [@felipekntz](https://github.com/felipekntz) |
+| Murilo Magalhães | 2920482521009 | [@MuriloMgl](https://github.com/MuriloMgl) |
+| Felipe Martins | 29220482521008 | [@felipekntz](https://github.com/felipekntz) |
 
 ---
 
