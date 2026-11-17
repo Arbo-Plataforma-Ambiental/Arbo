@@ -25,7 +25,7 @@ public class OcorrenciaService {
         if (ocorrencia.getDataRegistro() == null) {
             ocorrencia.setDataRegistro(LocalDateTime.now());
         }
-        
+
         return ocorrenciaRepository.save(ocorrencia);
     }
 
@@ -37,24 +37,28 @@ public class OcorrenciaService {
         ocorrenciaRepository.deleteById(id);
     }
 
-    public Ocorrencia atualizar(Long id, Ocorrencia ocorrenciaAtualizada) {
+    public Ocorrencia atualizar(Long id, Ocorrencia dados) {
+        Optional<Ocorrencia> encontrada = ocorrenciaRepository.findById(id);
 
-        Optional<Ocorrencia> ocorrenciaEncontrada = ocorrenciaRepository.findById(id);
-
-        if (ocorrenciaEncontrada.isEmpty()) {
+        if (encontrada.isEmpty()) {
             return null;
         }
 
-        Ocorrencia ocorrencia = ocorrenciaEncontrada.get();
+        Ocorrencia ocorrencia = encontrada.get();
 
-        ocorrencia.setTitulo(ocorrenciaAtualizada.getTitulo());
-        ocorrencia.setDescricao(ocorrenciaAtualizada.getDescricao());
-        ocorrencia.setTipo(ocorrenciaAtualizada.getTipo());
-        ocorrencia.setLatitude(ocorrenciaAtualizada.getLatitude());
-        ocorrencia.setLongitude(ocorrenciaAtualizada.getLongitude());
-        ocorrencia.setStatus(ocorrenciaAtualizada.getStatus());
+        ocorrencia.setTitulo(dados.getTitulo());
+        ocorrencia.setDescricao(dados.getDescricao());
+        ocorrencia.setTipo(dados.getTipo());
+        ocorrencia.setLatitude(dados.getLatitude());
+        ocorrencia.setLongitude(dados.getLongitude());
+
+        if (dados.getStatus() != null) {
+            ocorrencia.setStatus(dados.getStatus());
+        }
+        if (dados.getImagem() != null) {
+            ocorrencia.setImagem(dados.getImagem());
+        }
 
         return ocorrenciaRepository.save(ocorrencia);
     }
-
 }

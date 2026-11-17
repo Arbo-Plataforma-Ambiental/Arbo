@@ -3,13 +3,13 @@ package com.arbo.arbo.backend.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.arbo.arbo.backend.model.Usuario;
 import com.arbo.arbo.backend.repository.UsuarioRepository;
-
-
 
 @Service
 public class UsuarioService {
@@ -27,11 +27,23 @@ public class UsuarioService {
     }
 
     public Usuario cadastrar(Usuario usuario) {
-        
-        String senhaHash = passwordEncoder.encode(usuario.getSenha());
-        usuario.setSenha(senhaHash);
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "E-mail já cadastrado");
+        }
 
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
+    }
+
+    public Usuario autenticar(String email, String senha) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> credenciaisInvalidas());
+
+        if (!passwordEncoder.matches(senha, usuario.getSenha())) {
+            throw credenciaisInvalidas();
+        }
+
+        return usuario;
     }
 
     public Optional<Usuario> buscarPorId(Long id) {
@@ -53,13 +65,13 @@ public class UsuarioService {
 
         usuario.setNome(usuarioAtualizado.getNome());
         usuario.setEmail(usuarioAtualizado.getEmail());
-        String senhaHash= passwordEncoder.encode(usuarioAtualizado.getSenha());
-        usuario.setSenha(senhaHash);
+        usuario.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
         usuario.setTipo(usuarioAtualizado.getTipo());
 
         return usuarioRepository.save(usuario);
     }
 
-    
-
+       private ResponseStatusException credenciaisInvalidas() {
+        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos");
+    }
 }

@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS ocorrencia (
     titulo VARCHAR(100) NOT NULL,
     descricao VARCHAR(500) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL,
+    latitude DECIMAL(10, 7) NOT NULL,
+    longitude DECIMAL(10, 7) NOT NULL,
     imagem VARCHAR(500),
     status VARCHAR(30) NOT NULL DEFAULT 'PENDENTE',
     data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS ong (
         FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
+
+-- tabelas planejadas para as próximas etapas (ainda não utilizadas)
 CREATE TABLE IF NOT EXISTS mutirao (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,

@@ -1,4 +1,4 @@
-
+import { API_URL } from "../config"
 import { useState } from "react"
 
 type FormularioLoginProps = {
@@ -10,6 +10,7 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
   const [senha, setSenha] = useState("")
   const [modoCadastro, setModoCadastro] = useState(false)
   const [nome, setNome] = useState("")
+  const [mensagemErro, setMensagemErro] = useState("")
 
 
   async function lidarComEnvio(
@@ -20,7 +21,7 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
     if (modoCadastro) {
       try {
         const resposta = await fetch(
-          "http://localhost:8080/usuarios",
+          `${API_URL}/usuarios`,
           {
             method: "POST",
             headers: {
@@ -53,7 +54,30 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
       return
     }
 
-    onEntrar()
+    setMensagemErro("")
+
+    try {
+           const resposta = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, senha: senha }),
+      })
+
+      if (!resposta.ok) {
+        const corpo = await resposta.json()
+        setMensagemErro(corpo.erro ?? "Não foi possível entrar.")
+        return
+      }
+
+      const usuario = await resposta.json()
+
+      localStorage.setItem("arbo-usuario", JSON.stringify(usuario))
+
+      onEntrar()
+    } catch (erro) {
+      console.error("Erro no login: ", erro)
+      setMensagemErro("Não foi possível conectar ao servidor.")
+    }
 
   }
 
@@ -65,6 +89,11 @@ function FormularioLogin({ onEntrar }: FormularioLoginProps) {
         className="formulario-login"
         onSubmit={lidarComEnvio}
       >
+
+        {mensagemErro && (
+          <p className="mensagem-formulario erro">{mensagemErro}</p>
+        )}
+
 
         {modoCadastro && (
           <div className="grupo-campo">
